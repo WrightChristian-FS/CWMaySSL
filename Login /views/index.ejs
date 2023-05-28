@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+
+      .wrapper {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .content {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header><%- include("partial/nav", { sess: sess }) %></header>
+
+      <main class="content container mt-4">
+        <h1>Home Page</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at metus
+          augue. Curabitur commodo, metus sed mattis vestibulum, urna mauris
+          sodales urna, vel pharetra odio justo sit amet mauris. In hac
+          habitasse platea dictumst. Aenean id diam eget turpis rutrum tempor et
+          a felis. Nullam venenatis enim purus, vitae interdum dui feugiat
+          vitae. Morbi nec diam fermentum, ultrices tortor a, commodo justo.
+        </p>
+      </main>
+
+      <footer class="bg-dark text-white text-center py-3 mt-4">
+        &copy; 2023 The Wright Development Company. All rights reserved.
+      </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
