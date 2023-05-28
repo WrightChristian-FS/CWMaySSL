@@ -1,201 +1,67 @@
-// Require file server
-"use strict";
-var fs = require("fs");
-var http = require("http");
-var path = require("path");
-var url = require("url");
+// ERROR LIST
 
-var express = require("express");
-// var request = require("request");
-
-
-const ejs = require("ejs");
-var app = express();
-
-const router = express.Router();
-
-app.set("view engine", "ejs");
-app.engine("ejs", require("ejs").__express);
+// 1: There is a typo in the var HTTP
+// 2. There is a typo in the functon 
+// 3. Did not include async (If there is a promise the function must be async)
+// 4. Did not include await. (If there is async, the code must await for async to complete the load)
+// 5. The call Httpbin is asynced but not a correct function 
+// 6. Missing async keyword. 
+// 7. Missing await before being called 
+// 8. The function myName did not return a promise 
+// 9. The resolve function did not have the correct data, passed the data 
+// 10. This allowed errrors, updated to prevent errrors. 
 
 
-var bodyParser = require("body-parser");
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-const session = require("express-session");
-app.use(session({secret:"secret", saveUninitialized:true, resave:true}));
-var sess; 
-
-// Set up your routing
-router.get("/", function (req, res) {
-    console.log("Route Succesfull")
-    sess = req.session; 
-  res.render("index", { pagename: "Home", sess:sess }); //Views/index.ejs
-}); 
-
-router.get("/profile", function(req, res){ 
-  console.log("Route Successful");
-    sess = req.session; 
-    if(typeof(sess)=="undefinded" || sess.loggedin != true){ 
-        var errors = ["Not a authenticated user"]
-        res.render("index", {pagename: "Home", errors:errors })
-    } else { 
-        res.render("profile", {pagename: "Profile", sess:sess})
-    }
-})
-
-router.get("/logout", function(req,res){
-    sess = req.session; 
-    sess.destroy(function(err){
-        res.redirect("/"); 
-    })
-
-})
-
-router.get("/about", function (req, res) {
-    // console.log(errors);
-    var errors = []
-    sess = req.session; 
-  res.render("about", { pagename: "About", sess:sess , errors:errors }); //views/about.ejs
-});
-
-router.post("/login", function (req, res) {
-  var errors = [];
 
 
-//   Verify that the email and password are not empty 
-  if(req.body.email ==""){
-    errors.push("Email is required")
-  }
-  if(req.body.passwor==""){
-    errors.push("Password is required")
-  }
+// 1
+var http = require('http');
 
-//   Check to see if the email or password are in correct. 
-  if (req.body.email !== "mike@aol.com" || req.body.password !== "abc123") {
-    errors.push("Invalid email or password");
-  }
-
-
-  // if the errrors length is greater than 0, shwo errors. otherwise show the session. 
-if (errors.length > 0 ) { 
-    res.render('index', {pagename: "Home", errors:errors})
-} else { 
-    req.session.loggedin = true; 
-    res.render('profile', {pagename:"Profile", sess: sess})
+// 2
+var myname = function() {
+  return new Promise((resolve, reject) => {
+    // 8
+    console.log("Here is my IP address");
+    // 9
+    resolve();
+  });
 }
 
+// 3
+async function callHttpbin() {
+  return new Promise((resolve, reject) => {
+    http.get(
+      'http://httpbin.org/ip',
+      function(response) {
+        var str = "";
+        response.setEncoding('utf8');
+        response.on('data', function(data) {
+          str += data;
+        });
 
+        response.on('end', function() {
+          var result = JSON.parse(str);
+          var myips = result.origin;
+          resolve(myips);
+        });
 
+        // 10
+        response.on('error', function(error) {
+          reject(error);
+        });
+      }
+    );
+  });
+}
 
-})
+// 6
+async function executeAsyncTask() {
+  // 4
+  const valueA = await callHttpbin();
 
-// router.post("/reg", function(req, res){ 
-//     res.redirect("/")
-//     var errors = []; 
+//   7
+  await myname();
+  console.log(valueA);
+}
 
-//     // VAlidate to ensure that each field is not empty 
-//   if (req.body.first === "") {
-//     errors.push("First Name is required");
-//   }
-
-//   if (req.body.last === "") {
-//     errors.push("Last Name is required");
-//   }
-
-//   if (req.body.address === "") {
-//     errors.push("Address is required");
-//   }
-
-//   if (req.body.city === "") {
-//     errors.push("City is required");
-//   }
-
-//   if (req.body.state === "") {
-//     errors.push("State is required");
-//   }
-
-// //   Validate that zip is a number 
-//   if (req.body.zip === "") {
-//     errors.push("Zip is required");
-//   } else if (isNaN(req.body.age)){
-//     errors.push("Zip Code must be a number!")
-//   }
-
-//   if (req.body.age === undefined) {
-//     errors.push("Age is required");
-//   }
-
-//   if (req.body.gender === undefined) {
-//     errors.push("Gender is required");
-//   }
-
-//   if (!req.body.consent) {
-//     errors.push("Consent is required");
-//   }
-
-//   if (req.body.bio === "") {
-//     errors.push("Bio is required");
-//   }
-
-//   res.render("index", { pagename: "Home", errors: errors }); //Views/index.ejs
-
-// })
-
-router.post("/reg", function(req, res){
-  var errors = [];
-  
-
-  // Validate to ensure that each field is not empty
-  if (req.body.first === "") {
-    errors.push("First Name is required");
-  }
-
-  if (req.body.last === "") {
-    errors.push("Last Name is required");
-  }
-
-  if (req.body.address === "") {
-    errors.push("Address is required");
-  }
-
-  if (req.body.city === "") {
-    errors.push("City is required");
-  }
-
-  if (req.body.state === "") {
-    errors.push("State is required");
-  }
-
-  // Validate that zip is a number
-  if (req.body.zip === "") {
-    errors.push("Zip is required");
-  } else if (isNaN(req.body.zip)){
-    errors.push("Zip Code must be a number!");
-  }
-
-  if (req.body.age === undefined) {
-    errors.push("Age is required");
-  }
-
-  if (req.body.gender === undefined) {
-    errors.push("Gender is required");
-  }
-
-  if (!req.body.consent) {
-    errors.push("Consent is required");
-  }
-
-  if (req.body.bio === "") {
-    errors.push("Bio is required");
-  }
-
-  res.render("about", { pagename: "Reg", errors: errors });
-  // Views/index.ejs
-});
-
-
-
-app.use(express.static("public"));
-app.use("/", router);
-var server = app.listen("8080");
+executeAsyncTask();
